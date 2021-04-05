@@ -10,7 +10,42 @@
     <div>
       <button id="selectButton">Select Asset</button>
     </div>
-    <div id="out"></div>
+    <style>
+      .out {
+        width: 75%;
+        margin: 0 auto;
+      }
+      .respImage {
+        width: 100%;
+        height: 100%;
+        object-fit: fill;
+      }
+    </style>
+    <div class="out">
+      <img
+        data-responsive
+        data-image="https://s7d2.scene7.com/is/image/DynamicMediaNA/asset%201.neu"
+        src=""
+        class="respImage"
+        id="responsiveImage"
+      />
+      <!-- <img
+        data-responsive
+        src="https://s7d2.scene7.com/is/image/DynamicMediaNA/cq5dam.cropped.1360.763"
+        class="respImage"
+        style="width: 700px"
+        id="1234"
+      /> -->
+    </div>
   </body>
+
+  <!-- <script
+    type="text/javascript"
+    src="https://s7d2.scene7.com/s7viewers/libs/responsive_image.js"
+  ></script> -->
+  <!-- <script type="text/javascript">
+    s7responsiveImage(document.getElementById('responsiveImage'));
+  </script> -->
+
   <script type="text/javascript" src="index.ts"></script>
 </html>

@@ -2,6 +2,7 @@ import { Image as IImage } from './interfaces/image';
 import { IPath } from './interfaces/path';
 import * as IProfiles from './interfaces/IProfiles';
 import { IAEMPostMessage } from './interfaces/IAEMPostMessage';
+import { IS7RIJSONResponse } from './interfaces/IS7RIJSONResponse';
 const constants = {
   HOST: 'http://localhost:4502',
   NOHTTP_HOST: 'localhost:4502',
@@ -13,6 +14,8 @@ const constants = {
   USER: 'admin',
   // PASSWORD: 'eaem-read-only-user',
   PASSWORD: 'admin',
+  PUBLISH_SERVER: 'https://s7d2.scene7.com',
+  COMPANY_NAME: 'DynamicMediaNA',
 };
 
 async function getImageProfiles(
@@ -133,6 +136,11 @@ async function generateJson(
   }
 }
 
+function s7RIJSONResponse(obj: IS7RIJSONResponse, id: string) {
+  const res = obj.set.relation?.map((r) => r);
+  return res;
+}
+
 function Init(): void {
   let popup: Window = null;
   let profiles: IProfiles.IMetaProfiles = null;
@@ -143,6 +151,20 @@ function Init(): void {
     }
     const data = JSON.parse(e.data) as IAEMPostMessage;
     if (data.config.action === 'done') {
+      const imageName = data.data[0].title.substring(
+        0,
+        data.data[0].title.lastIndexOf('.')
+      );
+      //TODO: Make this a proper Type
+      const obj: any = {};
+      const url = `${constants.PUBLISH_SERVER}/is/image/${constants.COMPANY_NAME}/${imageName}?req=set,json&handler=s7RIJSONResponse`;
+      const scene7Res = await fetch(url).then((r) => r.text());
+      obj.base = `${constants.PUBLISH_SERVER}/is/image`;
+      const renditions = eval(scene7Res);
+      if (renditions) obj.renditions = renditions;
+
+      console.log(obj);
+
       const output = await generateJson(data, profiles);
       if (output) {
         console.log(JSON.stringify(output));
@@ -155,6 +177,11 @@ function Init(): void {
   document
     .getElementById('selectButton')
     .addEventListener('click', async () => {
+      const img = document.querySelector('[data-responsive]');
+      img.setAttribute(
+        'src',
+        'https://s7d2.scene7.com/is/image/DynamicMediaNA/cq5dam.cropped.1360.763:Large'
+      );
       try {
         profiles = await getImageProfiles(
           constants.HOST,
